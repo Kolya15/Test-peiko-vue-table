@@ -11,9 +11,9 @@
             class="stocks-table__body"
         >
             <div>{{ item.stocks }}</div>
-            <div>{{ item.current | rounding }}</div>
+            <div>{{ item.current | changeNumberFormat }}</div>
             <div :class="item.change >= 0 ? 'stocks-table__body_positive-value' : 'stocks-table__body_negative-value'">
-                {{ item.change | rounding }}
+                {{ item.change | changeNumberFormat | addingPlus }}
             </div>
         </div>
     </div>
@@ -26,8 +26,11 @@ export default {
         dataStocksTable: Array,
     },
     filters: {
-        rounding(value) {
-            return value.toFixed(2)
+        changeNumberFormat(value) {
+            return value.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        addingPlus(value) {
+            return value >= 0 ? `+${value}` : value;
         }
     },
 }
@@ -67,6 +70,7 @@ export default {
         border-top: $border;
 
         &_positive-value {
+            position: relative;
             color: #65d242;
         }
 
