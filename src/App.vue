@@ -42,11 +42,14 @@ export default {
             simulateAsyncReq(payload)
                 .then(data => {
                     let arrayObjStocks = [];
-                    for (let i = 0; i < Object.keys(data).length; i++) {
+                    for (let i = 0; i < data.stocks.length; i++) {
                         let objStock = {};
                         Object.keys(data).forEach(item => objStock[item] = data[item][i]);
-                        objStock.change = objStock.current - objStock.start;
-                        arrayObjStocks.push(objStock);
+                        if (objStock.current && objStock.start) {
+                            objStock.change = objStock.current - objStock.start;
+                            delete objStock.start
+                            arrayObjStocks.push(objStock);
+                        }
                     }
                     this.dataStocksTable = this.sortByAlphabet(arrayObjStocks);
                     this.requestFailed = false;
@@ -55,7 +58,11 @@ export default {
                 .finally(() => this.loading = false)
         },
         sortByAlphabet(array) {
-            return array.sort((a, b) => a.stocks < b.stocks ? -1 : a.stocks > b.stocks ? 1 : 0);
+            return array.sort((a, b) => {
+                let firstStock = a.stocks.toLowerCase();
+                let secondStock = b.stocks.toLowerCase();
+                return firstStock < secondStock ? -1 : firstStock > secondStock ? 1 : 0
+            });
         }
     },
     components: {
