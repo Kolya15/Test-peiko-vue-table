@@ -13,7 +13,7 @@
             <div>{{ item.stocks }}</div>
             <div>{{ item.current | changeNumberFormat }}</div>
             <div :class="item.change >= 0 ? 'stocks-table__body_positive-value' : 'stocks-table__body_negative-value'">
-                {{ item.change | changeNumberFormat | addingPlus }}
+                {{ item.change | changeNumberFormat }}
             </div>
         </div>
     </div>
@@ -27,11 +27,8 @@ export default {
     },
     filters: {
         changeNumberFormat(value) {
-            return value.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return value.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
-        addingPlus(value) {
-            return value >= 0 ? `+${value}` : value;
-        }
     },
 }
 </script>
@@ -69,9 +66,21 @@ export default {
         @extend %table-row;
         border-top: $border;
 
+        div {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
         &_positive-value {
             position: relative;
             color: #65d242;
+        }
+
+        &_positive-value::before {
+            content: '+';
+            position: relative;
+            left: 4px;
         }
 
         &_negative-value {
